@@ -10,7 +10,7 @@ public class GhostHunter extends Game {
 	boolean keyDown, keyUp, keyLeft, keyRight, keyFire;	
 	
 	public GhostHunter() {
-		super("Ghost Hunter", 1024, 1024);
+		super("Ghost Hunter", 1024, 768);
 	}
 	
 	public void gamePaint(float interpolation) {
