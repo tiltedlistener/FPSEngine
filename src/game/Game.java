@@ -25,11 +25,10 @@ public class Game extends JFrame implements Runnable, KeyListener{
 	// Key States
 	boolean keyDown, keyUp, keyLeft, keyRight, keyFire;	
 	
-	public Game() {
-		// Static vars
-		super("Ghost Hunter");
-		this.screenWidth = 1024;
-		this.screenHeight = 1024;
+	public Game(String name, int width, int height) {
+		super(name);
+		this.screenWidth = width;
+		this.screenHeight = height;
 		this.desiredFrameRate = 60;
 		
 		// Graphics Setup
