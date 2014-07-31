@@ -14,7 +14,7 @@ public class GhostHunter extends Game {
 	}
 	
 	public void gamePaint(float interpolation) {
-		System.out.println(interpolation);
+		
 	}
 	
 	public void gameUpdate() {
