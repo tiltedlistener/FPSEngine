@@ -1,11 +1,14 @@
 package game;
 
 import entities.*;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
+
 import javax.swing.JFrame;
 
 abstract class Game extends JFrame implements Runnable, KeyListener{
@@ -25,6 +28,10 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 	
 	// Game State
 	boolean paused = false;
+	
+	// Game objects
+	private LinkedList<Sprite> _sprites;
+	public LinkedList<Sprite> sprites() { return _sprites; }
 	
 	// Absract Methods
 	abstract void gamePaint(float interpolation);
@@ -91,7 +98,6 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 	    int lastSecondTime = (int) (lastUpdateTime / 1000000000);
 		
 		while(t == gameLoop) {
-			
 			double now = System.nanoTime();
 			int updateCount = 0;
 			 
@@ -137,11 +143,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 			}			
 		}
 	}
-	
-	public void setInterpolation(float interp) {
-       interpolation = interp;
-    } 
-	
+		
 	public void stop() {
 		gameLoop = null;
 	}
@@ -163,6 +165,10 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 	public void render(float interpolation) {
 		setInterpolation(interpolation);
 		repaint();
+	}
+	
+	public void setInterpolation(float interp) {
+	       interpolation = interp;
 	}
 	
 	public void paint(Graphics g) {
