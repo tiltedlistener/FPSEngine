@@ -33,6 +33,8 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 	private LinkedList<Sprite> _sprites;
 	public LinkedList<Sprite> sprites() { return _sprites; }
 	
+	
+	
 	// Absract Methods
 	abstract void gamePaint(float interpolation);
 	abstract void gameUpdate();
