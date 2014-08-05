@@ -1,19 +1,17 @@
 package entities;
 
-public class Player {
-	
-	public int x;
-	public int y;
-	public float direction;
-	public int paces;
-	public ImageEntity image;
-	
-	public Player(int _x, int _y, float _direction, ImageEntity _image) {
-		this.x = _x;
-		this.y = _y;
-		this.direction = _direction;
-		this.paces = 0;
-		this.image = _image;
+import java.awt.Graphics2D;
+import javax.swing.JFrame;
+
+import physics.Point2D;
+
+public class Player extends Sprite {
+
+	public Player(JFrame _frame, Graphics2D _g2d, int screenWidth, int screenHeight) {
+		super(_frame, _g2d);
+		setAlive(true);
+		load("images/shotgun.png");
+		setPosition(new Point2D((screenWidth - imageWidth())/2, screenHeight - imageHeight() + 20));
 	}
 	
 }

@@ -31,4 +31,13 @@ public class Point2D extends Point {
 		this.y = y;
 	}
 	
+	public Point2D clone() {
+		return new Point2D(this.x, this.y);
+	}
+	
+	public void setAsSelf(Point2D newPoint) {
+		this.x = newPoint.x;
+		this.y = newPoint.y;
+	}
+	
 }

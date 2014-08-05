@@ -7,10 +7,19 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.LinkedList;
 
 import javax.swing.JFrame;
 
+/**
+ * Game engine heavily borrowed from for the sprite and rendering format from
+ * JS Harbour - http://jharbour.com/wordpress/portfolio/beginning-java-se-6-game-programming-3rd-ed/
+ * 
+ * @author tiltedlistener
+ *
+ */
 abstract class Game extends JFrame implements Runnable, KeyListener{
 	
 	private static final long serialVersionUID = 1;
@@ -22,24 +31,24 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 	private int frameCount = 0;
 	
 	// Graphics rendering
-	private BufferedImage backBuffer;
 	private Graphics2D g2d;
-	private int screenWidth, screenHeight;
+	public Graphics2D graphics() { return g2d; }
+	
+	private BufferedImage backBuffer;
+	protected int screenWidth, screenHeight;
 	
 	// Game State
 	boolean paused = false;
 	
 	// Game objects
-	private LinkedList<Sprite> _sprites;
+	private LinkedList<Sprite> _sprites = new LinkedList<Sprite>();
 	public LinkedList<Sprite> sprites() { return _sprites; }
 	
-	
-	
 	// Absract Methods
-	abstract void gamePaint(float interpolation);
 	abstract void gameUpdate();
 	abstract void gameKeyDown(int keyCode);
 	abstract void gameKeyUp(int keyCode);
+	abstract void spriteCollision(Sprite spr1, Sprite spr2);
 	
 	public Game(String name, int width, int height) {
 		super(name);
@@ -52,9 +61,6 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 		
 		// Controls
 		addKeyListener(this);
-		
-		// Begin game
-		start();
 	}
 	
 	/**
@@ -63,6 +69,9 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 	public void start() {		
 		// Show the screen
 		setSize(this.screenWidth, this.screenHeight);
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+		
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -177,7 +186,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 		g2d.clearRect(0, 0, this.screenWidth, this.screenHeight);		
 		
 		// Draw individual components
-		gamePaint(interpolation);
+		drawSprites(interpolation);
 		
 		g.drawImage(backBuffer, 0, 0, this);
 	}	
@@ -193,4 +202,27 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 		gameKeyUp(k.getKeyCode());
 	}
 	
+	
+	/**
+	 * Update loops
+	 */
+	protected void updateSprites() {
+		for(int n=0;n<_sprites.size();n++){
+			Sprite spr = (Sprite)_sprites.get(n);
+			if(spr.alive()) {
+				spr.updatePosition();
+			}
+		}
+	}
+	
+	protected void drawSprites(float interpolation) {
+		for (int n=0;n<_sprites.size();n++) {
+			Sprite spr = (Sprite)_sprites.get(n);
+			if(spr.alive()) {
+				spr.transform(interpolation);
+				spr.draw();
+			}
+		}
+	}
+		
 }

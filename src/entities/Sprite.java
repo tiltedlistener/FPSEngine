@@ -5,12 +5,13 @@ import java.awt.*;
 import java.awt.Graphics2D;
 import java.awt.Color;
 import javax.swing.JFrame;
-import physics.*;
+import physics.Point2D;
 
 public class Sprite extends Object {
 
 	private ImageEntity entity;
 	protected Point2D pos;
+	protected Point2D lastPos;
 	protected Point2D vel;
 	protected double rotRate;
 	protected int currentState;
@@ -22,7 +23,10 @@ public class Sprite extends Object {
         entity = new ImageEntity(_frame);
         entity.setGraphics(_g2d);
         entity.setAlive(false);
+        
         pos = new Point2D(0, 0);
+        lastPos = pos.clone();
+        
         vel = new Point2D(0, 0);
         rotRate = 0.0;
         currentState = 0;
@@ -35,9 +39,12 @@ public class Sprite extends Object {
         entity.load(filename);
     }
     
-    public void transform() {
-        entity.setX(pos.X());
-        entity.setY(pos.Y());
+    public void transform(float interpolation) {
+    	double finalX = (this.pos.x - this.lastPos.x) * interpolation + this.lastPos.x;
+    	double finalY = (this.pos.y - this.lastPos.y) * interpolation + this.lastPos.y;
+    	  	
+        entity.setX(finalX);
+        entity.setY(finalY);
         entity.transform();
     }
     
@@ -53,6 +60,7 @@ public class Sprite extends Object {
     public void updatePosition() {
         pos.setX(pos.X() + vel.X());
         pos.setY(pos.Y() + vel.Y());
+        lastPos.setAsSelf(pos);
     }
     
     public double rotationRate() { return rotRate; }
@@ -74,7 +82,10 @@ public class Sprite extends Object {
 
     //sprite position
     public Point2D position() { return pos; }
-    public void setPosition(Point2D pos) { this.pos = pos; }
+    public void setPosition(Point2D pos) { 
+    	this.pos = pos; 
+    	this.lastPos = pos.clone();
+    }
 
     //sprite movement velocity
     public Point2D velocity() { return vel; }
