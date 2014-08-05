@@ -11,11 +11,14 @@ public class GhostHunter extends Game {
 	private static final long serialVersionUID = 2;
 	
 	// Key Game Objects
-	Player player;
-	LinkedList<Sprite> map = new LinkedList<Sprite>();
+	private Player player;
+	private LinkedList<Sprite> map = new LinkedList<Sprite>();
+	
+	// Sprite Types
+	final static int PLAYER = 0;
 	
 	// Key States
-	boolean keyDown, keyUp, keyLeft, keyRight, keyFire;	
+	public ControlState controls;
 	
 	public GhostHunter() {
 		super("Ghost Hunter", 1024, 576);
@@ -54,32 +57,38 @@ public class GhostHunter extends Game {
 	public void gameKeyDown(int k) {
 		switch(k) {
 		case KeyEvent.VK_LEFT:
-			keyLeft = true;
+			controls.keyLeft = true;
 			break;
 		case KeyEvent.VK_RIGHT:
-			keyRight = true;
+			controls.keyRight = true;
 			break;
 		case KeyEvent.VK_UP:
-			keyUp = true;
+			controls.keyUp = true;
 			break;	
+		case KeyEvent.VK_DOWN:
+			controls.keyDown = true;
+			break;			
 		case KeyEvent.VK_SPACE:
-			keyFire = true;
+			controls.keyFire = true;
 			break;
 		}
 	}
 	public void gameKeyUp(int k) {
 		switch(k) {
 		case KeyEvent.VK_LEFT:
-			keyLeft = false;
+			controls.keyLeft = false;
 			break;
 		case KeyEvent.VK_RIGHT:
-			keyRight = false;
+			controls.keyRight = false;
 			break;
 		case KeyEvent.VK_UP:
-			keyUp = false;
-			break;	
+			controls.keyUp = false;
+			break;
+		case KeyEvent.VK_DOWN:
+			controls.keyDown = false;
+			break;			
 		case KeyEvent.VK_SPACE:
-			keyFire = false;
+			controls.keyFire = false;
 			break;
 		}
 	}

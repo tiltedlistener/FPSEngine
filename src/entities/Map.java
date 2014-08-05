@@ -18,4 +18,12 @@ public class Map {
 		this.light = 0;
 	}
 	
+	public void randomize() {
+		
+	}
+	
+	public double get(double x, double y) {
+		return 0;
+	}
+	
 }
