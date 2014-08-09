@@ -16,6 +16,8 @@ public class GhostHunter extends Game {
 	
 	// Sprite Types
 	final static int PLAYER = 0;
+	final static int ENEMEY = 1;
+	final static int BULLET = 2;
 	
 	// Key States
 	public ControlState controls;
