@@ -10,6 +10,8 @@ public class Map {
 	public ImageEntity sky;
 	public ImageEntity wallTexture;
 	public int light;
+	public WallPos noWall;
+	public WallPosBuilder wallBuild = new WallPosBuilder();
 	
 	private Random rand = new Random();
 	
@@ -19,6 +21,10 @@ public class Map {
 		this.sky = _sky;
 		this.wallTexture = _wall;
 		this.light = 0;
+		
+		wallBuild.create();
+		wallBuild.setLength(Double.POSITIVE_INFINITY);
+		this.noWall = wallBuild.get();
 	}
 	
 	public void randomize() {
@@ -42,8 +48,81 @@ public class Map {
 		return this.grid.get(cleanY * this.size + cleanX);
 	}
 	
-	public double cast(Point2D point, double angle, double range) {
-		return 0;
+	public ArrayList<Origin> cast(Point2D point, double angle, double range) {
+		double sin = Math.sin(angle);
+		double cos = Math.cos(angle);
+		return this.ray(new Origin(point.x, point.y), sin, cos, range);
 	}
 	
+	public ArrayList<Origin> ray(Origin origin, double sin, double cos, double range) {
+		WallPos stepX = this.step(sin, cos, origin.x, origin.y, false);
+		WallPos stepY = this.step(cos, sin, origin.y, origin.x, true);
+		Origin nextStep;
+		
+		if (stepX.length2 < stepY.length2) {
+			nextStep = inspect(stepX, 1, 0, origin.distance, stepX.y);
+		} else {
+			nextStep = inspect(stepY, 0, 1, origin.distance, stepY.x);
+		}
+		
+		ArrayList<Origin> finalGroup = new ArrayList<Origin>();
+		finalGroup.add(origin);
+		if (nextStep.distance <= range) {	
+			ArrayList<Origin> otherGroup = this.ray(nextStep, sin, cos, range);
+			finalGroup.addAll(otherGroup);
+		} 
+		return finalGroup;
+	}
+
+	public WallPos step(double rise, double run, double x, double y, boolean inverted) {
+		
+		return new WallPos();
+	}
+	
+	public Origin inspect(WallPos step, int shiftX, int shiftY, double distance, double offset) {
+		
+		return new Origin(0,0);
+	}
+	
+	
+	/**
+	 * NESTED WALL CLASS
+	 */
+	public class WallPosBuilder {
+		
+		private WallPos wall;
+		
+		public void create() {
+			this.wall = new WallPos();
+		}
+		
+		public void setLength(double length) {
+			wall.length2 = length;
+		}
+		
+		public WallPos get() {
+			return this.wall;
+		}
+	}
+	
+	public class WallPos {
+		public double length2;
+		public double x;
+		public double y;
+	}
+	
+	/**
+	 * NESTED ORIGIN CLASS
+	 */
+	public class Origin {
+		public double x; 
+		public double y;
+		public double height = 0;
+		public double distance = 0;
+		
+		public Origin(double x, double y) {
+			this.x = x;
+			this.y = y;
+		}
+	}
 }
