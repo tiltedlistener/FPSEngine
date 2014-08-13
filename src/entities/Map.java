@@ -75,8 +75,29 @@ public class Map {
 	}
 
 	public WallPos step(double rise, double run, double x, double y, boolean inverted) {
+		if (run == 0) return this.noWall;
 		
-		return new WallPos();
+		double dx;
+		if (run > 0) {
+			dx = Math.floor(x + 1) - x;
+		} else {
+			dx = Math.ceil(x - 1) - x;
+		}
+		
+		double dy = dx * (rise / run);
+		
+		this.wallBuild.create();
+		this.wallBuild.setLength(dx * dx + dy * dy);
+		
+		if (inverted) {
+			this.wallBuild.setX(y + dy);
+			this.wallBuild.setY(x + dx);
+		} else {
+			this.wallBuild.setY(y + dy);
+			this.wallBuild.setX(x + dx);
+		}
+
+		return this.wallBuild.get();
 	}
 	
 	public Origin inspect(WallPos step, int shiftX, int shiftY, double distance, double offset) {
@@ -98,6 +119,14 @@ public class Map {
 		
 		public void setLength(double length) {
 			wall.length2 = length;
+		}
+		
+		public void setX(double x) {
+			this.wall.x = x;
+		}
+		
+		public void setY(double y) {
+			this.wall.y = y;
 		}
 		
 		public WallPos get() {
