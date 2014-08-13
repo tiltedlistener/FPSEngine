@@ -1,6 +1,7 @@
 package entities;
 
 import java.util.*;
+import physics.*;
 
 public class Map {
 
@@ -34,6 +35,14 @@ public class Map {
 	}
 	
 	public double get(double x, double y) {
+		int cleanX = (int)Math.floor(x);
+		int cleanY = (int)Math.floor(y);
+		
+		if (cleanX < 0 || cleanX > this.size - 1 || cleanY < 0 || cleanY > this.size - 1) return -1;
+		return this.grid.get(cleanY * this.size + cleanX);
+	}
+	
+	public double cast(Point2D point, double angle, double range) {
 		return 0;
 	}
 	
