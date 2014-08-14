@@ -17,6 +17,10 @@ import javax.swing.JFrame;
  * Game engine heavily borrowed from for the sprite and rendering format from
  * JS Harbour - http://jharbour.com/wordpress/portfolio/beginning-java-se-6-game-programming-3rd-ed/
  * 
+ * Loop structure updated past Harbour thanks to the internet
+ * 
+ * JFrame adaptation by me. 
+ * 
  * @author tiltedlistener
  */
 abstract class Game extends JFrame implements Runnable, KeyListener{
@@ -176,6 +180,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 		setInterpolation(interpolation);
 		repaint();
 	}
+	
 	
 	public void setInterpolation(float interp) {
 	       interpolation = interp;

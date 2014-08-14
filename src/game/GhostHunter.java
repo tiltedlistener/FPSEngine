@@ -24,9 +24,22 @@ public class GhostHunter extends Game {
 	// Key States
 	public ControlState controls;
 	
+	// Camera properties
+	public double resolution = 320;
+	public double spacing;
+	public double focalLength = 0.8;
+	public double range = 14;
+	public double lightRange = 5;
+	public double scale;
+	
+	
 	public GhostHunter() {
 		super("Ghost Hunter", 1024, 576);
 	
+		// Setup camera properties
+		this.spacing = this.screenWidth / this.resolution;
+		this.scale = (this.screenWidth + this.screenHeight) / 1200;
+		
 		// Setup our main components
 		player = new Player(15.3, -1.2, Math.PI * 0.3, load("images/shotgun.png"));
 		map = new Map(32, load("images/sky.png"), load("images/wall.png"));
@@ -35,13 +48,11 @@ public class GhostHunter extends Game {
 		start();
 	}
 	
-	public void generateWalls() {
-		
-	}
-	
-	
 	/**
 	 * Utility for Media methods
+	 * Contrary to Harbour - our FPS engine doesn't consider sprites as self-contained. Instead,
+	 * they hold position, direction, and reference to their image, but they are not responsible for 
+	 * drawing themselves. This engine is. 
 	 */
 	public Image load(String filename) {
 		Toolkit tk = Toolkit.getDefaultToolkit();
