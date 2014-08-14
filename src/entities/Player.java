@@ -8,7 +8,7 @@ public class Player {
 
 	private final double CIRCLE = Math.PI * 2;
 	
-	private Image entity;
+	public Image weapon;
 	public Point2D pos;
 	public double direction;
 	public int paces = 0;
@@ -16,11 +16,11 @@ public class Player {
 	public Player(double x, double y, double _direction, Image _entity) {
 		pos = new Point2D(x,y);
 		direction = _direction;
-		entity = _entity;
+		weapon = _entity;
 	}
 	
 	public Image getImage() {
-		return entity;
+		return weapon;
 	}
 	
 	public void rotate(double angle) {

@@ -12,6 +12,8 @@ public class GhostHunter extends Game {
 
 	private static final long serialVersionUID = 2;
 	
+	private final double CIRCLE = Math.PI * 2;
+	
 	// Key Game Objects
 	private Player player;
 	private Map map;
@@ -41,8 +43,8 @@ public class GhostHunter extends Game {
 		this.scale = (this.screenWidth + this.screenHeight) / 1200;
 		
 		// Setup our main components
-		player = new Player(15.3, -1.2, Math.PI * 0.3, load("images/shotgun.png"));
-		map = new Map(32, load("images/sky.png"), load("images/wall.png"));
+		player = new Player(15.3, -1.2, Math.PI * 0.3, load("images/knife_hand.png"));
+		map = new Map(32, load("images/deathvalley_panorama.png"), load("images/wall_texture.png"));
 		
 		// Begin game
 		start();
@@ -64,6 +66,30 @@ public class GhostHunter extends Game {
 	 */	
 	public void gameUpdate() {
 		updateSprites();
+	}
+	
+	public void gameDraw(double interpolation) {
+		this.drawSky(this.player.direction, this.map.skybox, this.map.light);
+		this.drawColumns();
+		this.drawWeapon(this.player.weapon, this.player.paces);
+	}
+	
+	public void drawSky(double direction, Image sky, double light) {
+		double width = sky.getWidth(this) * (this.screenHeight / sky.getHeight(this)) * 2;
+        double left = (direction / CIRCLE) * -width;
+        graphics().drawImage(sky, (int)left, 0, (int)width, this.screenHeight, this);
+        
+        if (left < width - this.screenWidth) {
+        	graphics().drawImage(sky, (int)(left+width), 0, (int)width, this.screenHeight, this);
+        }
+	}
+	
+	public void drawColumns() {
+		
+	}
+	
+	public void drawWeapon(Image weapon, int paces) {
+		
 	}
 	
 	/**

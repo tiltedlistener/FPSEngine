@@ -8,7 +8,7 @@ public class Map {
 
 	public int size;
 	public List<Integer> grid;
-	public Image sky;
+	public Image skybox;
 	public Image wallTexture;
 	public double light;
 	public Step noWall = new Step();
@@ -20,7 +20,7 @@ public class Map {
 	public Map(int size, Image _sky, Image _wall) {
 		this.size = size;
 		this.grid = new ArrayList<Integer>(size * size);
-		this.sky = _sky;
+		this.skybox = _sky;
 		this.wallTexture = _wall;
 		this.light = 0;
 		

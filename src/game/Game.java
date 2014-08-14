@@ -49,6 +49,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 	
 	// Abstract Methods
 	abstract void gameUpdate();
+	abstract void gameDraw(double interpolation);
 	abstract void gameKeyDown(int keyCode);
 	abstract void gameKeyUp(int keyCode);
 	abstract void spriteCollision(Sprite spr1, Sprite spr2);
@@ -191,6 +192,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 		
 		// Draw individual components
 		drawSprites(interpolation);
+		gameDraw(interpolation);
 		
 		g.drawImage(backBuffer, 0, 0, this);
 	}	
