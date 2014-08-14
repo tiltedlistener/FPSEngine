@@ -18,7 +18,6 @@ import javax.swing.JFrame;
  * JS Harbour - http://jharbour.com/wordpress/portfolio/beginning-java-se-6-game-programming-3rd-ed/
  * 
  * @author tiltedlistener
- *
  */
 abstract class Game extends JFrame implements Runnable, KeyListener{
 	
@@ -44,7 +43,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 	private LinkedList<Sprite> _sprites = new LinkedList<Sprite>();
 	public LinkedList<Sprite> sprites() { return _sprites; }
 	
-	// Absract Methods
+	// Abstract Methods
 	abstract void gameUpdate();
 	abstract void gameKeyDown(int keyCode);
 	abstract void gameKeyUp(int keyCode);

@@ -2,29 +2,29 @@ package entities;
 
 import java.util.*;
 import physics.*;
+import java.awt.Image;
 
 public class Map {
 
 	public int size;
 	public List<Integer> grid;
-	public ImageEntity sky;
-	public ImageEntity wallTexture;
-	public int light;
-	public WallPos noWall;
-	public WallPosBuilder wallBuild = new WallPosBuilder();
+	public Image sky;
+	public Image wallTexture;
+	public double light;
+	public Step noWall = new Step();
+	public Angle currentAngle = new Angle();
+	public double currentRange = 0;
 	
 	private Random rand = new Random();
 	
-	public Map(int size, ImageEntity _sky, ImageEntity _wall) {
+	public Map(int size, Image _sky, Image _wall) {
 		this.size = size;
 		this.grid = new ArrayList<Integer>(size * size);
 		this.sky = _sky;
 		this.wallTexture = _wall;
 		this.light = 0;
 		
-		wallBuild.create();
-		wallBuild.setLength(Double.POSITIVE_INFINITY);
-		this.noWall = wallBuild.get();
+		this.noWall.length2 = Double.POSITIVE_INFINITY;
 	}
 	
 	public void randomize() {
@@ -48,33 +48,49 @@ public class Map {
 		return this.grid.get(cleanY * this.size + cleanX);
 	}
 	
-	public ArrayList<Origin> cast(Point2D point, double angle, double range) {
-		double sin = Math.sin(angle);
-		double cos = Math.cos(angle);
-		return this.ray(new Origin(point.x, point.y), sin, cos, range);
+	public void update(double seconds) {
+		if (this.light > 0) {
+			this.light = Math.max(this.light - 10 * seconds, 0);		
+		} else if (Math.random() * 5 < seconds) {
+			this.light = 2;
+		}
 	}
 	
-	public ArrayList<Origin> ray(Origin origin, double sin, double cos, double range) {
-		WallPos stepX = this.step(sin, cos, origin.x, origin.y, false);
-		WallPos stepY = this.step(cos, sin, origin.y, origin.x, true);
-		Origin nextStep;
+	/**
+	 * Entry point for all ray work
+	 * @param point this is the Point2D of the Player object
+	 * @param angle Player's direction attribute
+	 * @param range Camera object's range
+	 * @return ray object
+	 */
+	public ArrayList<Ray> cast(Point2D point, double angle, double range) {
+		this.currentAngle.sin = Math.sin(angle);
+		this.currentAngle.cos = Math.cos(angle);
+		this.currentRange = range;
+		return this.ray(new Ray(point, 0, 0));
+	}
+	
+	public ArrayList<Ray> ray(Ray origin) {
+		Step stepX = this.step(this.currentAngle.sin, this.currentAngle.cos, origin.pos.x, origin.pos.y, false);
+		Step stepY = this.step(this.currentAngle.cos, this.currentAngle.sin, origin.pos.y, origin.pos.x, true);
 		
+		NextStep nextStep;
 		if (stepX.length2 < stepY.length2) {
-			nextStep = inspect(stepX, 1, 0, origin.distance, stepX.y);
+			nextStep = inspect(stepX, 1, 0, origin.distance, stepX.pos.y);
 		} else {
-			nextStep = inspect(stepY, 0, 1, origin.distance, stepY.x);
+			nextStep = inspect(stepY, 0, 1, origin.distance, stepY.pos.x);
 		}
 		
-		ArrayList<Origin> finalGroup = new ArrayList<Origin>();
+		ArrayList<Ray> finalGroup = new ArrayList<Ray>();
 		finalGroup.add(origin);
-		if (nextStep.distance <= range) {	
-			ArrayList<Origin> otherGroup = this.ray(nextStep, sin, cos, range);
+		if (nextStep.distance <= this.currentRange) {	
+			ArrayList<Ray> otherGroup = this.ray(new Ray(nextStep.pos, nextStep.height, nextStep.distance));
 			finalGroup.addAll(otherGroup);
 		} 
 		return finalGroup;
 	}
-
-	public WallPos step(double rise, double run, double x, double y, boolean inverted) {
+	
+	public Step step(double rise, double run, double x, double y, boolean inverted) {
 		if (run == 0) return this.noWall;
 		
 		double dx;
@@ -83,75 +99,93 @@ public class Map {
 		} else {
 			dx = Math.ceil(x - 1) - x;
 		}
-		
 		double dy = dx * (rise / run);
 		
-		this.wallBuild.create();
-		this.wallBuild.setLength(dx * dx + dy * dy);
-		
+		Step result = new Step();
+		result.length2 = dx * dx + dy * dy;
 		if (inverted) {
-			this.wallBuild.setX(y + dy);
-			this.wallBuild.setY(x + dx);
+			result.pos.x = y + dy;
+			result.pos.y = x + dx;
 		} else {
-			this.wallBuild.setY(y + dy);
-			this.wallBuild.setX(x + dx);
+			result.pos.y = y + dy;
+			result.pos.x = x + dx;
 		}
-
-		return this.wallBuild.get();
+		return result;
 	}
 	
-	public Origin inspect(WallPos step, int shiftX, int shiftY, double distance, double offset) {
+	public NextStep inspect(Step step, int shiftX, int shiftY, double distance, double offset) {
+		double dx = 0;
+		double dy = 0;
+		if (this.currentAngle.cos < 0) dx = shiftX;
+		if (this.currentAngle.sin < 0) dy = shiftY;
 		
-		return new Origin(0,0);
+		/**
+		 * In the PlayfulJS demo, he sets additional params on the step object
+		 * Here we're going to extend it to NextStep
+		 */
+		NextStep nextStep = new NextStep();
+		nextStep.height = this.get(step.pos.x - dx, step.pos.y - dy);
+		nextStep.distance = distance + Math.sqrt(step.length2);
+		
+		if (shiftX == 1) {
+			nextStep.shading = (this.currentAngle.cos < 0) ? 2 : 0;
+		} else {
+			nextStep.shading = (this.currentAngle.sin < 0) ? 2 : 1;
+		}
+		
+		nextStep.offset = offset - Math.floor(offset);
+		return nextStep;
 	}
 	
 	
 	/**
-	 * NESTED WALL CLASS
+	 * RAY: return data from the cast() function
 	 */
-	public class WallPosBuilder {
-		
-		private WallPos wall;
-		
-		public void create() {
-			this.wall = new WallPos();
-		}
-		
-		public void setLength(double length) {
-			wall.length2 = length;
-		}
-		
-		public void setX(double x) {
-			this.wall.x = x;
-		}
-		
-		public void setY(double y) {
-			this.wall.y = y;
-		}
-		
-		public WallPos get() {
-			return this.wall;
-		}
-	}
-	
-	public class WallPos {
-		public double length2;
-		public double x;
-		public double y;
-	}
-	
-	/**
-	 * NESTED ORIGIN CLASS
-	 */
-	public class Origin {
-		public double x; 
-		public double y;
+	public class Ray {
+		public Point2D pos = new Point2D(0,0);
 		public double height = 0;
 		public double distance = 0;
 		
-		public Origin(double x, double y) {
-			this.x = x;
-			this.y = y;
+		// In case there needs to be an empty obj
+		public Ray() {}
+		
+		public Ray(Point2D point, double _height, double _distance) {
+			pos.setAsSelf(point);
+			height = _height;
+			distance = _distance;
 		}
 	}
+	
+	/**
+	 * ANGLE: used to hold the current angle so its present throughout the cast process
+	 * Playful JS uses nested functions to resolve this, but that's not present in Java
+	 */
+	public class Angle {
+		public double cos = 0;
+		public double sin = 0;
+	}
+	
+	/**
+	 * STEP: return object of the step function
+	 */	
+	public class Step {
+		public double length2;
+		public Point2D pos = new Point2D(0,0);
+	}
+	
+	/**
+	 * NextStep: return of the inspect() function
+	 * Pretty close to Ray in definition, but because NextStep is an extension of
+	 * Step in the code literally, we'll inherit from there
+	 * @author tiltedlistener
+	 */
+	public class NextStep extends Step { 
+		public double offset = 0;
+		public double shading = 0;
+		public double height = 0;
+		public double distance = 0;
+	}
+	
+	
+
 }

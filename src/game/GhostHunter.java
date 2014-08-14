@@ -3,6 +3,8 @@ package game;
 import entities.*;
 import physics.*;
 
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 
@@ -12,7 +14,7 @@ public class GhostHunter extends Game {
 	
 	// Key Game Objects
 	private Player player;
-	private LinkedList<Sprite> map = new LinkedList<Sprite>();
+	private Map map;
 	
 	// Sprite Types
 	final static int PLAYER = 0;
@@ -25,11 +27,9 @@ public class GhostHunter extends Game {
 	public GhostHunter() {
 		super("Ghost Hunter", 1024, 576);
 	
-		// Setup our player
-		player = new Player(this, graphics(), this.screenWidth, this.screenHeight);
-		
-		// Add our sprites to the list
-		sprites().add(player);
+		// Setup our main components
+		player = new Player(15.3, -1.2, Math.PI * 0.3, load("images/shotgun.png"));
+		map = new Map(32, load("images/sky.png"), load("images/wall.png"));
 		
 		// Begin game
 		start();
@@ -37,6 +37,15 @@ public class GhostHunter extends Game {
 	
 	public void generateWalls() {
 		
+	}
+	
+	
+	/**
+	 * Utility for Media methods
+	 */
+	public Image load(String filename) {
+		Toolkit tk = Toolkit.getDefaultToolkit();
+		return tk.getImage(filename);	
 	}
 	
 	/**
