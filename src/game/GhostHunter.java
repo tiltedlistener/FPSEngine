@@ -76,18 +76,18 @@ public class GhostHunter extends Game {
 	
 	public void gameDraw(double interpolation) {
 		this.drawSky(this.player.direction, this.map.skybox, this.map.light);
-		//this.drawColumns();
+	//	this.drawColumns();
 		this.drawWeapon(this.player.weapon, this.player.paces);
 	}
-	
+
 	public void drawSky(double direction, Image sky, double light) {
-		double width = sky.getWidth(this) * ((double)this.screenHeight / (double)sky.getHeight(this)) * 2;
-        double left = (direction / CIRCLE) * -width;
+		int width = (int)(sky.getWidth(this) * ((double)this.screenHeight / (double)sky.getHeight(this)) * 2);		
+        int left =(int)((direction / CIRCLE) * -width);
         
-        graphics().drawImage(sky, 0, 0, (int)this.screenWidth, (int)this.screenHeight, (int)width, 0, (int)this.screenWidth, (int)this.screenHeight, this);
+        graphics().drawImage(sky, left, 0, width, this.screenHeight, this);
         
         if (left < width - this.screenWidth) {
-            graphics().drawImage(sky, 0, 0, (int)this.screenWidth, (int)this.screenHeight, (int)(width + left), 0, (int)this.screenWidth, (int)this.screenHeight, this);
+            graphics().drawImage(sky, left + width, 0, width, this.screenHeight, this);
         }
 	}
 	
