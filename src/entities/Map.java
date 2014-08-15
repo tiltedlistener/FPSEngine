@@ -7,7 +7,7 @@ import java.awt.Image;
 public class Map {
 
 	public int size;
-	public List<Integer> grid;
+	public int[] grid;
 	public Image skybox;
 	public Image wallTexture;
 	public double light;
@@ -19,7 +19,7 @@ public class Map {
 	
 	public Map(int size, Image _sky, Image _wall) {
 		this.size = size;
-		this.grid = new ArrayList<Integer>(size * size);
+		this.grid = new int[1024];
 		this.skybox = _sky;
 		this.wallTexture = _wall;
 		this.light = 0;
@@ -36,7 +36,8 @@ public class Map {
 				input = 1;
 			else 
 				input = 0;
-			this.grid.set(i, input);
+			
+			this.grid[i] = input;
 		}
 	}
 	
@@ -44,8 +45,8 @@ public class Map {
 		int cleanX = (int)Math.floor(x);
 		int cleanY = (int)Math.floor(y);
 		
-		if (cleanX < 0 || cleanX > this.size - 1 || cleanY < 0 || cleanY > this.size - 1) return -1;
-		return this.grid.get(cleanY * this.size + cleanX);
+		if ((cleanX < 0 || cleanX > this.size - 1) || (cleanY < 0 || cleanY > this.size - 1)) return -1;
+		return this.grid[cleanY * this.size + cleanX];
 	}
 	
 	public void update(double seconds) {
@@ -84,7 +85,7 @@ public class Map {
 		ArrayList<Ray> finalGroup = new ArrayList<Ray>();
 		finalGroup.add(origin);
 		if (nextStep.distance <= this.currentRange) {	
-			ArrayList<Ray> otherGroup = this.ray(new Ray(nextStep.pos, nextStep.height, nextStep.distance));
+			ArrayList<Ray> otherGroup = this.ray(nextStep);
 			finalGroup.addAll(otherGroup);
 		} 
 		return finalGroup;
@@ -137,25 +138,6 @@ public class Map {
 		return nextStep;
 	}
 	
-	
-	/**
-	 * RAY: return data from the cast() function
-	 */
-	public class Ray {
-		public Point2D pos = new Point2D(0,0);
-		public double height = 0;
-		public double distance = 0;
-		
-		// In case there needs to be an empty obj
-		public Ray() {}
-		
-		public Ray(Point2D point, double _height, double _distance) {
-			pos.setAsSelf(point);
-			height = _height;
-			distance = _distance;
-		}
-	}
-	
 	/**
 	 * ANGLE: used to hold the current angle so its present throughout the cast process
 	 * Playful JS uses nested functions to resolve this, but that's not present in Java
@@ -163,27 +145,6 @@ public class Map {
 	public class Angle {
 		public double cos = 0;
 		public double sin = 0;
-	}
-	
-	/**
-	 * STEP: return object of the step function
-	 */	
-	public class Step {
-		public double length2;
-		public Point2D pos = new Point2D(0,0);
-	}
-	
-	/**
-	 * NextStep: return of the inspect() function
-	 * Pretty close to Ray in definition, but because NextStep is an extension of
-	 * Step in the code literally, we'll inherit from there
-	 * @author tiltedlistener
-	 */
-	public class NextStep extends Step { 
-		public double offset = 0;
-		public double shading = 0;
-		public double height = 0;
-		public double distance = 0;
 	}
 	
 	

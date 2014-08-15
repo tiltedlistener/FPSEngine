@@ -29,7 +29,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 	
 	// Game loop
 	private Thread gameLoop;
-	private float interpolation;
+	protected float interpolation;
 	private int fps = 60;
 	private int frameCount = 0;
 	
