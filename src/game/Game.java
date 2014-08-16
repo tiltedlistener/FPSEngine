@@ -1,7 +1,5 @@
 package game;
 
-import entities.*;
-
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -9,23 +7,23 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.util.LinkedList;
 
 import javax.swing.JFrame;
 
 /**
- * Game engine heavily borrowed from for the sprite and rendering format from
+ * Game engine controls routines, gamestate, and abstract format borrowed from for the sprite and rendering format from
  * JS Harbour - http://jharbour.com/wordpress/portfolio/beginning-java-se-6-game-programming-3rd-ed/
  * 
- * Loop structure updated past Harbour thanks to the internet
- * 
- * JFrame adaptation by me. 
+ * Loop structure from Eli Delvanthal
  * 
  * @author tiltedlistener
  */
 abstract class Game extends JFrame implements Runnable, KeyListener{
 	
 	private static final long serialVersionUID = 1;
+	
+	// Mode
+	private boolean DEBUG = false;
 	
 	// Game loop
 	private Thread gameLoop;
@@ -43,16 +41,11 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 	// Game State
 	boolean paused = false;
 	
-	// Game objects
-	private LinkedList<Sprite> _sprites = new LinkedList<Sprite>();
-	public LinkedList<Sprite> sprites() { return _sprites; }
-	
 	// Abstract Methods
 	abstract void gameUpdate();
 	abstract void gameDraw(double interpolation);
 	abstract void gameKeyDown(int keyCode);
 	abstract void gameKeyUp(int keyCode);
-	abstract void spriteCollision(Sprite spr1, Sprite spr2);
 	
 	public Game(String name, int width, int height) {
 		super(name);
@@ -139,6 +132,11 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 				int thisSecond = (int) (lastUpdateTime / 1000000000);
 				if (thisSecond > lastSecondTime) {
 				   fps = frameCount;
+				  
+				   if (DEBUG) {
+					   System.out.println("FPS: " + fps);
+				   }
+				   
 				   frameCount = 0;
 				   lastSecondTime = thisSecond;
 				}
@@ -191,7 +189,6 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 		g2d.clearRect(0, 0, this.screenWidth, this.screenHeight);		
 		
 		// Draw individual components
-		drawSprites(interpolation);
 		gameDraw(interpolation);
 		
 		g.drawImage(backBuffer, 0, 0, this);
@@ -206,29 +203,6 @@ abstract class Game extends JFrame implements Runnable, KeyListener{
 	}
 	public void keyReleased(KeyEvent k) {
 		gameKeyUp(k.getKeyCode());
-	}
-	
-	
-	/**
-	 * Update loops
-	 */
-	protected void updateSprites() {
-		for(int n=0;n<_sprites.size();n++){
-			Sprite spr = (Sprite)_sprites.get(n);
-			if(spr.alive()) {
-				spr.updatePosition();
-			}
-		}
-	}
-	
-	protected void drawSprites(float interpolation) {
-		for (int n=0;n<_sprites.size();n++) {
-			Sprite spr = (Sprite)_sprites.get(n);
-			if(spr.alive()) {
-				spr.transform(interpolation);
-				spr.draw();
-			}
-		}
 	}
 		
 }

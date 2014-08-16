@@ -29,15 +29,8 @@ public class Map {
 	
 	public void randomize() {
 		for (int i=0; i < this.size * this.size; i++) {
-			float result = rand.nextFloat();
-			
-			int input;
-			if (result > 0.3)
-				input = 1;
-			else 
-				input = 0;
-			
-			this.grid[i] = input;
+			float result = rand.nextFloat();			
+			this.grid[i] = (result > 0.5) ? 1 : 0;
 		}
 	}
 	
@@ -146,7 +139,5 @@ public class Map {
 		public double cos = 0;
 		public double sin = 0;
 	}
-	
-	
 
 }

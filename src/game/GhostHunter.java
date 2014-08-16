@@ -2,14 +2,11 @@ package game;
 
 import entities.*;
 import entities.Map;
-import physics.*;
 
-import java.util.*;
 import java.util.ArrayList;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.util.LinkedList;
 
 public class GhostHunter extends Game {
 
@@ -45,9 +42,8 @@ public class GhostHunter extends Game {
 		this.scale = (this.screenWidth + this.screenHeight) / 1200;
 		
 		// Setup our main components
-		player = new Player(15.3, -1.2, Math.PI * 0.3, load("images/knife_hand.png"));
+		player = new Player(5, 5, Math.PI * 2, load("images/knife_hand.png"));
 		map = new Map(32, load("images/deathvalley_panorama.jpg"), load("images/wall_texture.jpg"));
-		
 		map.randomize();
 		
 		// Begin game
@@ -58,7 +54,7 @@ public class GhostHunter extends Game {
 	 * Utility for Media methods
 	 * Contrary to Harbour - our FPS engine doesn't consider sprites as self-contained. Instead,
 	 * they hold position, direction, and reference to their image, but they are not responsible for 
-	 * drawing themselves. This engine is. 
+	 * drawing themselves. This engine is as I don't want the sprites to worry about projection.
 	 */
 	public Image load(String filename) {
 		Toolkit tk = Toolkit.getDefaultToolkit();
@@ -69,21 +65,19 @@ public class GhostHunter extends Game {
 	 * Game Loop methods
 	 */	
 	public void gameUpdate() {
-		updateSprites();
 		map.update(interpolation);
-		player.update(controls, interpolation/10, map);
+		player.update(controls, interpolation/20, map);
 	}
 	
 	public void gameDraw(double interpolation) {
 		this.drawSky(this.player.direction, this.map.skybox, this.map.light);
-	//	this.drawColumns();
+		this.drawColumns();
 		this.drawWeapon(this.player.weapon, this.player.paces);
 	}
 
 	public void drawSky(double direction, Image sky, double light) {
 		int width = (int)(sky.getWidth(this) * ((double)this.screenHeight / (double)sky.getHeight(this)) * 2);		
         int left =(int)((direction / CIRCLE) * -width);
-        
         graphics().drawImage(sky, left, 0, width, this.screenHeight, this);
         
         if (left < width - this.screenWidth) {
@@ -102,34 +96,32 @@ public class GhostHunter extends Game {
 	
 	public void drawColumn(int column, ArrayList<Ray> ray, double angle) {
 		Image texture = map.wallTexture;
-		double left = Math.floor(column * this.spacing);
-		double width = Math.ceil(this.spacing);
+		double left = (int)Math.floor(column * this.spacing);
+		double width = (int)Math.ceil(this.spacing);
 		int hit = -1;
 		
-		while (hit++ < ray.size() && ray.get(hit).height <= 0 );
+		// Make sure we got a hit
+		while (hit++ < ray.size() && ray.get(hit).height <= 0 ) {
+			// We need this here rather than PlayfulJS because we'll throw errors 
+			// rather than just move on with our lives like normal people. 
+			if (ray.size()-1 < hit+1) {
+				return;
+			}
+		}
 		
 		for (int s = ray.size() - 1; s >=0; s--) {
 			Ray step = ray.get(s);
 			
 			if (s == hit) {
-				double textureX = Math.floor(texture.getWidth(this) * step.offset);
+				int textureX = (int)Math.floor(texture.getWidth(this) * step.offset);
 				Wall wall = this.project(step.height, angle, step.distance); 
-				
+							
 				graphics().drawImage(texture, 
 						(int)left, (int)wall.top, 
-						(int)width, (int)wall.height, 
-						0, 0, 
-						(int)textureX, texture.getHeight(this), 
+						(int)(width + left), (int)wall.height, 
+						textureX, 0,
+						1, texture.getHeight(this),
 						this);
-				/**
-				graphics().drawImage(texture, 
-						(int)left, (int)wall.top, 
-						(int)width, (int)wall.height, 
-						(int)textureX, 0, 
-						1, texture.getHeight(this), 
-						this);
-						**/
-				
 			}
 		}
 	}
@@ -142,13 +134,6 @@ public class GhostHunter extends Game {
 	}
 	
 	public void drawWeapon(Image weapon, int paces) {
-		
-	}
-	
-	/**
-	 * Sprite State Changes
-	 */
-	public void spriteCollision(Sprite spr1, Sprite spr2) {
 		
 	}
 	
@@ -196,6 +181,8 @@ public class GhostHunter extends Game {
 	
 	/**
 	 * WALL DATA OBJECT
+	 * Not truly a wall. This is a data object that PlayfulJS builds on the fly.
+	 * I suppose everything is a data object if you think about it. Even ourselves. 
 	 */
 	public class Wall {
 		public double top = 0;
