@@ -65,8 +65,8 @@ public class Map {
 	}
 	
 	public ArrayList<Ray> ray(Ray origin) {
-		Step stepX = this.step(this.currentAngle.sin, this.currentAngle.cos, origin.pos.x, origin.pos.y, false);
-		Step stepY = this.step(this.currentAngle.cos, this.currentAngle.sin, origin.pos.y, origin.pos.x, true);
+		Step stepX = this.stepCheck(this.currentAngle.sin, this.currentAngle.cos, origin.pos.x, origin.pos.y, false);
+		Step stepY = this.stepCheck(this.currentAngle.cos, this.currentAngle.sin, origin.pos.y, origin.pos.x, true);
 		
 		NextStep nextStep;
 		if (stepX.length2 < stepY.length2) {
@@ -77,14 +77,18 @@ public class Map {
 		
 		ArrayList<Ray> finalGroup = new ArrayList<Ray>();
 		finalGroup.add(origin);
-		if (nextStep.distance <= this.currentRange) {	
+		
+		if (nextStep.distance > this.currentRange) {	
+			return finalGroup;
+		} else {
 			ArrayList<Ray> otherGroup = this.ray(nextStep);
 			finalGroup.addAll(otherGroup);
-		} 
-		return finalGroup;
+			return finalGroup;
+		}
+		
 	}
 	
-	public Step step(double rise, double run, double x, double y, boolean inverted) {
+	public Step stepCheck(double rise, double run, double x, double y, boolean inverted) {
 		if (run == 0) return this.noWall;
 		
 		double dx;
