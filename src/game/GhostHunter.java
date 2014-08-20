@@ -27,8 +27,16 @@ public class GhostHunter extends Game {
 	public ControlState controls = new ControlState();
 	
 	// Camera properties
-	public double resolution = 320;
-	public double spacing;
+	public double resolution = 320;			// The number of columns we've divided the screen into.
+	public double spacing;					// This is how wide those columns will be. We need to know the screenWidth to calculate
+	
+	/**
+	 * Explanation on Focal Length: the 50mm lens is often considered most close to the human eye
+	 * which I found was highly debated, however, 50mm results in roughly 46 degrees of view, roughly
+	 * equivalent to 0.8 Radians. http://olympuszuiko.wordpress.com/2007/09/05/does-a-50mm-normal-lens-really-see-what-the-eye-sees/
+	 * 
+	 *  Regardless, it's essentially how zoomed in we are. 0.8 looks and feels good for our engine. 
+	 */
 	public double focalLength = 0.8;
 	public double range = 14;
 	public double lightRange = 5;
