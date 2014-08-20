@@ -42,8 +42,8 @@ public class GhostHunter extends Game {
 		this.scale = (this.screenWidth + this.screenHeight) / 1200;
 		
 		// Setup our main components
-		player = new Player(5, 5, Math.PI * 2, load("images/knife_hand.png"));
-		map = new Map(32, load("images/deathvalley_panorama.jpg"), load("images/wall_texture.jpg"));
+		player = new Player(5, 5, Math.PI * 1.25, load("images/knife_hand.png"));
+		map = new Map(2, load("images/deathvalley_panorama.jpg"), load("images/wall_texture.jpg"));
 		map.randomize();
 		
 		// Begin game
@@ -87,8 +87,17 @@ public class GhostHunter extends Game {
 	
 	public void drawColumns() {
 		for (int column = 0; column < this.resolution; column++){ 
+			
+			/**
+			 * UNDERSTAND: these two calculations will return degrees varying from -32 to 32 degrees
+			 * Or roughly 64 degrees of view, which is roughly what the standard FOV for console games
+			 * is. http://en.wikipedia.org/wiki/Field_of_view_in_video_games
+			 * 
+			 * 0.5 is just convenient to write as opposed to trying to hit 60 degrees exactly. 
+			 */
 			double x = column / this.resolution - 0.5;
 			double angle = Math.atan2(x, this.focalLength);
+			
 			ArrayList<Ray> ray = this.map.cast(player.pos, player.direction + angle, this.range);
 			this.drawColumn(column, ray, angle);
 		}
