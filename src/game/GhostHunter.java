@@ -1,7 +1,6 @@
 package game;
 
 import entities.*;
-import entities.Map;
 
 import java.util.ArrayList;
 import java.awt.Image;
@@ -35,7 +34,7 @@ public class GhostHunter extends Game {
 	 * which I found was highly debated, however, 50mm results in roughly 46 degrees of view, roughly
 	 * equivalent to 0.8 Radians. http://olympuszuiko.wordpress.com/2007/09/05/does-a-50mm-normal-lens-really-see-what-the-eye-sees/
 	 * 
-	 *  Regardless, it's essentially how zoomed in we are. 0.8 looks and feels good for our engine. 
+	 *  Regardless, it's essentially how zoomed in we are. 0.8 looks and feels good for our engine. Though you could make drunk mode by varying this. 
 	 */
 	public double focalLength = 0.8;
 	public double range = 14;
@@ -50,7 +49,7 @@ public class GhostHunter extends Game {
 		this.scale = (this.screenWidth + this.screenHeight) / 1200;
 		
 		// Setup our main components
-		player = new Player(5, 5, Math.PI * 1.25, load("images/knife_hand.png"));
+		player = new Player(-1, -1, 0, load("images/knife_hand.png"));
 		map = new Map(2, load("images/deathvalley_panorama.jpg"), load("images/wall_texture.jpg"));
 		map.randomize();
 		
@@ -94,8 +93,7 @@ public class GhostHunter extends Game {
 	}
 	
 	public void drawColumns() {
-		for (int column = 0; column < this.resolution; column++){ 
-			
+		for (int column = 0; column < this.resolution; column++){ 	
 			/**
 			 * UNDERSTAND: these two calculations will return degrees varying from -32 to 32 degrees
 			 * Or roughly 64 degrees of view, which is roughly what the standard FOV for console games

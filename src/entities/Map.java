@@ -38,7 +38,6 @@ public class Map {
 	public double get(double x, double y) {
 		int cleanX = (int)Math.floor(x);
 		int cleanY = (int)Math.floor(y);
-		
 		if ((cleanX < 0 || cleanX > this.size - 1) || (cleanY < 0 || cleanY > this.size - 1)) return -1;
 		return this.grid[cleanY * this.size + cleanX];
 	}
@@ -67,9 +66,12 @@ public class Map {
 	
 	public ArrayList<Ray> ray(Ray origin) {
 		Step stepX = this.stepCheck(this.currentAngle.sin, this.currentAngle.cos, origin.pos.x, origin.pos.y, false);
+		
+		// Flip the point here so we check towards the opposite (horizontal vs vertical) side [note the x/y are switched too]
 		Step stepY = this.stepCheck(this.currentAngle.cos, this.currentAngle.sin, origin.pos.y, origin.pos.x, true);
 		
 		NextStep nextStep;
+		// Here we see which way is closer and proceed with inspection
 		if (stepX.length2 < stepY.length2) {
 			nextStep = inspect(stepX, 1, 0, origin.distance, stepX.pos.y);
 		} else {
@@ -91,8 +93,14 @@ public class Map {
 	
 	public Step stepCheck(double rise, double run, double x, double y, boolean inverted) {
 		if (run == 0) return this.noWall;
-		
 		double dx;
+		/**
+		 * Imagine here we are in a box quadrant's center at 45 degrees facing SE
+		 * So cos(315) is positive (looking at StepX), while sin(315) is negative with
+		 * a slope of -1
+		 * 
+		 * But dx will be positive. Hence, we'll move down one, and over right one
+		 */
 		if (run > 0) {
 			dx = Math.floor(x + 1) - x;
 		} else {
@@ -101,7 +109,17 @@ public class Map {
 		double dy = dx * (rise / run);
 		
 		Step result = new Step();
+		
+		/**
+		 * Length2 is rather a^2 + b^2 = c^2
+		 * This is used only for comparative purposes since
+		 * square roots are not fun to compute so fast
+		 */
 		result.length2 = dx * dx + dy * dy;
+		
+		/**
+		 * Use inverted when we're swapping pos
+		 */
 		if (inverted) {
 			result.pos.x = y + dy;
 			result.pos.y = x + dx;
@@ -109,6 +127,7 @@ public class Map {
 			result.pos.y = y + dy;
 			result.pos.x = x + dx;
 		}
+		
 		return result;
 	}
 	
@@ -122,17 +141,13 @@ public class Map {
 		 * In the PlayfulJS demo, he sets additional params on the step object
 		 * Here we're going to extend it to NextStep
 		 */
-		NextStep nextStep = new NextStep();
+		NextStep nextStep = new NextStep(step);
+		
 		nextStep.height = this.get(step.pos.x - dx, step.pos.y - dy);
 		nextStep.distance = distance + Math.sqrt(step.length2);
 		
-		if (shiftX == 1) {
-			nextStep.shading = (this.currentAngle.cos < 0) ? 2 : 0;
-		} else {
-			nextStep.shading = (this.currentAngle.sin < 0) ? 2 : 1;
-		}
-		
 		nextStep.offset = offset - Math.floor(offset);
+
 		return nextStep;
 	}
 	
