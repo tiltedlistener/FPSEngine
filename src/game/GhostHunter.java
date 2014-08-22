@@ -127,10 +127,12 @@ public class GhostHunter extends Game {
 		for (int s = ray.size() - 1; s >=0; s--) {
 			Ray step = ray.get(s);
 			
-			if (s == hit) {
+			if (s == hit) {				
 				int textureX = (int)Math.floor(texture.getWidth(this) * step.offset);
 				Wall wall = this.project(step.height, angle, step.distance); 
 							
+				System.out.println(left);
+				
 				graphics().drawImage(texture, 
 						(int)left, (int)wall.top, 
 						(int)(width + left), (int)wall.height, 

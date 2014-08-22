@@ -11,7 +11,7 @@ public class Map {
 	public Image skybox;
 	public Image wallTexture;
 	public double light;
-	public Step noWall = new Step();
+	public Ray noWall = new Ray();
 	public Angle currentAngle = new Angle();
 	public double currentRange = 0;
 	
@@ -65,12 +65,11 @@ public class Map {
 	}
 	
 	public ArrayList<Ray> ray(Ray origin) {
-		Step stepX = this.stepCheck(this.currentAngle.sin, this.currentAngle.cos, origin.pos.x, origin.pos.y, false);
-		
+		Ray stepX = this.stepCheck(this.currentAngle.sin, this.currentAngle.cos, origin.pos.x, origin.pos.y, false);
 		// Flip the point here so we check towards the opposite (horizontal vs vertical) side [note the x/y are switched too]
-		Step stepY = this.stepCheck(this.currentAngle.cos, this.currentAngle.sin, origin.pos.y, origin.pos.x, true);
+		Ray stepY = this.stepCheck(this.currentAngle.cos, this.currentAngle.sin, origin.pos.y, origin.pos.x, true);
 		
-		NextStep nextStep;
+		Ray nextStep;
 		// Here we see which way is closer and proceed with inspection
 		if (stepX.length2 < stepY.length2) {
 			nextStep = inspect(stepX, 1, 0, origin.distance, stepX.pos.y);
@@ -85,13 +84,14 @@ public class Map {
 			return finalGroup;
 		} else {
 			ArrayList<Ray> otherGroup = this.ray(nextStep);
+			
 			finalGroup.addAll(otherGroup);
 			return finalGroup;
 		}
 		
 	}
 	
-	public Step stepCheck(double rise, double run, double x, double y, boolean inverted) {
+	public Ray stepCheck(double rise, double run, double x, double y, boolean inverted) {
 		if (run == 0) return this.noWall;
 		double dx;
 		/**
@@ -108,7 +108,7 @@ public class Map {
 		}
 		double dy = dx * (rise / run);
 		
-		Step result = new Step();
+		Ray result = new Ray();
 		
 		/**
 		 * Length2 is rather a^2 + b^2 = c^2
@@ -131,7 +131,7 @@ public class Map {
 		return result;
 	}
 	
-	public NextStep inspect(Step step, int shiftX, int shiftY, double distance, double offset) {
+	public Ray inspect(Ray step, int shiftX, int shiftY, double distance, double offset) {
 		double dx = 0;
 		double dy = 0;
 		if (this.currentAngle.cos < 0) dx = shiftX;
@@ -141,11 +141,10 @@ public class Map {
 		 * In the PlayfulJS demo, he sets additional params on the step object
 		 * Here we're going to extend it to NextStep
 		 */
-		NextStep nextStep = new NextStep(step);
+		Ray nextStep = step.clone();
 		
 		nextStep.height = this.get(step.pos.x - dx, step.pos.y - dy);
 		nextStep.distance = distance + Math.sqrt(step.length2);
-		
 		nextStep.offset = offset - Math.floor(offset);
 
 		return nextStep;
