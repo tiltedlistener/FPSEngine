@@ -8,7 +8,14 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 
 public class GhostHunter extends Game {
-
+	
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		new GhostHunter();
+	}
+	
 	private static final long serialVersionUID = 2;
 	
 	private final double CIRCLE = Math.PI * 2;
