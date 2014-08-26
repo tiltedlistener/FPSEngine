@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.Color;
 
 public class GhostHunter extends Game {
 	
@@ -110,7 +111,7 @@ public class GhostHunter extends Game {
 			 */
 			double x = column / this.resolution - 0.5;
 			double angle = Math.atan2(x, this.focalLength);
-			
+						
 			ArrayList<Ray> ray = this.map.cast(player.pos, player.direction + angle, this.range);
 			this.drawColumn(column, ray, angle);
 		}
@@ -137,15 +138,18 @@ public class GhostHunter extends Game {
 			if (s == hit) {				
 				int textureX = (int)Math.floor(texture.getWidth(this) * step.offset);
 				Wall wall = this.project(step.height, angle, step.distance); 
-							
-				System.out.println(left);
-				
+					
+				/**
 				graphics().drawImage(texture, 
 						(int)left, (int)wall.top, 
-						(int)(width + left), (int)wall.height, 
+						(int)(width), (int)wall.height, 
 						textureX, 0,
 						1, texture.getHeight(this),
 						this);
+				**/	
+				
+				graphics().setColor(Color.orange);
+				graphics().fillRect((int)left, (int)wall.top, (int)(width), (int)wall.height);
 			}
 		}
 	}
