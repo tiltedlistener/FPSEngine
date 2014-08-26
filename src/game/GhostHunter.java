@@ -57,7 +57,11 @@ public class GhostHunter extends Game {
 		this.scale = (this.screenWidth + this.screenHeight) / 1200;
 		
 		// Setup our main components
-		player = new Player(-1, -1, 0, load("images/knife_hand.png"));
+		player = new Player(-1, -1, 0, load("images/knife_hand.png"));		
+		
+		/**
+		 * Wall image thanks to LeMog: http://www.lemog.fr/lemog_textures/displayimage.php?album=34&pos=20
+		 */
 		map = new Map(2, load("images/deathvalley_panorama.jpg"), load("images/wall_texture.jpg"));
 		map.randomize();
 		
@@ -139,17 +143,17 @@ public class GhostHunter extends Game {
 				int textureX = (int)Math.floor(texture.getWidth(this) * step.offset);
 				Wall wall = this.project(step.height, angle, step.distance); 
 					
-				/**
+
 				graphics().drawImage(texture, 
 						(int)left, (int)wall.top, 
 						(int)(width), (int)wall.height, 
 						textureX, 0,
 						1, texture.getHeight(this),
 						this);
-				**/	
+
 				
 				graphics().setColor(Color.orange);
-				graphics().fillRect((int)left, (int)wall.top, (int)(width), (int)wall.height);
+			    graphics().drawRect((int)left, (int)wall.top, (int)(width), (int)wall.height);
 			}
 		}
 	}
