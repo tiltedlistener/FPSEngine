@@ -7,6 +7,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.Color;
+import java.awt.Shape;
+import java.awt.*;
 
 public class GhostHunter extends Game {
 	
@@ -142,18 +144,10 @@ public class GhostHunter extends Game {
 			if (s == hit) {				
 				int textureX = (int)Math.floor(texture.getWidth(this) * step.offset);
 				Wall wall = this.project(step.height, angle, step.distance); 
-					
 
-				graphics().drawImage(texture, 
-						(int)left, (int)wall.top, 
-						(int)(width), (int)wall.height, 
-						textureX, 0,
-						1, texture.getHeight(this),
-						this);
-
-				
+				graphics().drawImage(texture, (int)left, (int)wall.top, (int)(width + left), (int)(wall.top + wall.height), textureX, 0, (int)this.spacing, (int)texture.getHeight(this), this);				
 				graphics().setColor(Color.orange);
-			    graphics().drawRect((int)left, (int)wall.top, (int)(width), (int)wall.height);
+			    // graphics().drawRect((int)left, (int)wall.top, (int)(width), (int)wall.height);
 			}
 		}
 	}
