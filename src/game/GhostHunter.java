@@ -64,7 +64,7 @@ public class GhostHunter extends Game {
 		/**
 		 * Wall image thanks to LeMog: http://www.lemog.fr/lemog_textures/displayimage.php?album=34&pos=20
 		 */
-		map = new Map(2, load("images/deathvalley_panorama.jpg"), load("images/wall_texture.jpg"));
+		map = new Map(32, load("images/deathvalley_panorama.jpg"), load("images/wall_texture.jpg"));
 		map.randomize();
 		
 		// Begin game
@@ -125,8 +125,8 @@ public class GhostHunter extends Game {
 	
 	public void drawColumn(int column, ArrayList<Ray> ray, double angle) {
 		Image texture = map.wallTexture;
-		double left = (int)Math.floor(column * this.spacing);
-		double width = (int)Math.ceil(this.spacing);
+		double left = Math.ceil(column * this.spacing);
+		double width = Math.ceil(this.spacing);
 		int hit = -1;
 		
 		// Make sure we got a hit
@@ -145,9 +145,10 @@ public class GhostHunter extends Game {
 				int textureX = (int)Math.floor(texture.getWidth(this) * step.offset);
 				Wall wall = this.project(step.height, angle, step.distance); 
 
-				graphics().drawImage(texture, (int)left, (int)wall.top, (int)(width + left), (int)(wall.top + wall.height), textureX, 0, (int)this.spacing, (int)texture.getHeight(this), this);				
-				graphics().setColor(Color.orange);
-			    // graphics().drawRect((int)left, (int)wall.top, (int)(width), (int)wall.height);
+				graphics().drawImage(texture, (int)left, (int)wall.top, (int)width + (int)left, (int)(wall.top + wall.height), textureX, 0, 300, (int)texture.getHeight(this), this);				
+				
+			   // graphics().setColor(Color.orange);
+			   // graphics().drawRect((int)left, (int)wall.top, (int)Math.floor(width), (int)wall.height);
 			}
 		}
 	}
