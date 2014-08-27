@@ -31,7 +31,6 @@ public class Map {
 		for (int i=0; i < this.size * this.size; i++) {
 			float result = rand.nextFloat();			
 			this.grid[i] = (result > 0.5) ? 1 : 0;
-			// this.grid[i] = 1;
 		}
 	}
 	

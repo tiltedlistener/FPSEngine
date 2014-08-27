@@ -55,8 +55,8 @@ public class GhostHunter extends Game {
 		super("Ghost Hunter", 1024, 576);
 	
 		// Setup camera properties
-		this.spacing = this.screenWidth / this.resolution;
-		this.scale = (this.screenWidth + this.screenHeight) / 1200;
+		this.spacing = this.screenWidth  / this.resolution;
+		this.scale = (this.screenWidth + this.screenHeight)/1200;
 		
 		// Setup our main components
 		player = new Player(-1, -1, 0, load("images/knife_hand.png"));		
@@ -64,7 +64,7 @@ public class GhostHunter extends Game {
 		/**
 		 * Wall image thanks to LeMog: http://www.lemog.fr/lemog_textures/displayimage.php?album=34&pos=20
 		 */
-		map = new Map(32, load("images/deathvalley_panorama.jpg"), load("images/wall_texture.jpg"));
+		map = new Map(32, load("images/background.png"), load("images/wall_texture.jpg"));
 		map.randomize();
 		
 		// Begin game
@@ -93,7 +93,6 @@ public class GhostHunter extends Game {
 	public void gameDraw(double interpolation) {
 		this.drawSky(this.player.direction, this.map.skybox, this.map.light);
 		this.drawColumns();
-		this.drawWeapon(this.player.weapon, this.player.paces);
 	}
 
 	public void drawSky(double direction, Image sky, double light) {
@@ -125,8 +124,8 @@ public class GhostHunter extends Game {
 	
 	public void drawColumn(int column, ArrayList<Ray> ray, double angle) {
 		Image texture = map.wallTexture;
-		double left = Math.ceil(column * this.spacing);
-		double width = Math.ceil(this.spacing);
+		int left = (int)Math.ceil(column * this.spacing);
+		int width = (int)Math.ceil(this.spacing);
 		int hit = -1;
 		
 		// Make sure we got a hit
@@ -145,10 +144,10 @@ public class GhostHunter extends Game {
 				int textureX = (int)Math.floor(texture.getWidth(this) * step.offset);
 				Wall wall = this.project(step.height, angle, step.distance); 
 
-				graphics().drawImage(texture, (int)left, (int)wall.top, (int)width + (int)left, (int)(wall.top + wall.height), textureX, 0, 300, (int)texture.getHeight(this), this);				
+				graphics().drawImage(texture, left, wall.top, width + left, wall.top + wall.height, textureX, 0, 1 + textureX, (int)texture.getHeight(this), this);				
 				
-			   // graphics().setColor(Color.orange);
-			   // graphics().drawRect((int)left, (int)wall.top, (int)Math.floor(width), (int)wall.height);
+			    graphics().setColor(Color.orange);
+			    // graphics().fillRect((int)left, (int)wall.top, (int)Math.floor(width), (int)wall.height);
 			}
 		}
 	}
@@ -160,9 +159,6 @@ public class GhostHunter extends Game {
 		return new Wall(bottom - wallHeight, wallHeight);
 	}
 	
-	public void drawWeapon(Image weapon, int paces) {
-		
-	}
 	
 	/**
 	 * KEY EVENTS
@@ -212,14 +208,14 @@ public class GhostHunter extends Game {
 	 * I suppose everything is a data object if you think about it. Even ourselves. 
 	 */
 	public class Wall {
-		public double top = 0;
-		public double height = 0;
+		public int top = 0;
+		public int height = 0;
 		
 		public Wall() {}
 		
 		public Wall(double _top, double _height) {
-			top = _top;
-			height = _height;
+			top = (int)Math.ceil(_top);
+			height = (int)Math.ceil(_height);
 		}
 	}
 	
