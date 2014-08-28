@@ -64,7 +64,7 @@ public class GhostHunter extends Game {
 		/**
 		 * Wall image thanks to LeMog: http://www.lemog.fr/lemog_textures/displayimage.php?album=34&pos=20
 		 */
-		map = new Map(32, load("images/background.png"), load("images/wall_texture.jpg"));
+		map = new Map(32, load("images/background.png"), load("images/wall_texture.jpg"), load("images/circle.png"));
 		map.randomize();
 		
 		// Begin game

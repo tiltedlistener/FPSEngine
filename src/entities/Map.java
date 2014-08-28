@@ -8,8 +8,10 @@ public class Map {
 
 	public int size;
 	public int[] grid;
+	public List<GameObject> objects = new ArrayList<GameObject>();
 	public Image skybox;
 	public Image wallTexture;
+	public Image circle;
 	public double light;
 	public Ray noWall = new Ray();
 	public Angle currentAngle = new Angle();
@@ -17,11 +19,12 @@ public class Map {
 	
 	private Random rand = new Random();
 	
-	public Map(int size, Image _sky, Image _wall) {
+	public Map(int size, Image _sky, Image _wall, Image _circle) {
 		this.size = size;
 		this.grid = new int[1024];
 		this.skybox = _sky;
 		this.wallTexture = _wall;
+		this.circle = _circle;
 		this.light = 0;
 		
 		this.noWall.length2 = Double.POSITIVE_INFINITY;
@@ -83,7 +86,6 @@ public class Map {
 			return finalGroup;
 		} else {
 			ArrayList<Ray> otherGroup = this.ray(nextStep);
-			
 			finalGroup.addAll(otherGroup);
 			return finalGroup;
 		}
@@ -136,12 +138,7 @@ public class Map {
 		if (this.currentAngle.cos < 0) dx = shiftX;
 		if (this.currentAngle.sin < 0) dy = shiftY;
 		
-		/**
-		 * In the PlayfulJS demo, he sets additional params on the step object
-		 * Here we're going to extend it to NextStep
-		 */
 		Ray nextStep = step.clone();
-		
 		nextStep.height = this.get(step.pos.x - dx, step.pos.y - dy);
 		nextStep.distance = distance + Math.sqrt(step.length2);
 		nextStep.offset = offset - Math.floor(offset);
